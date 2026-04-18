@@ -1,18 +1,18 @@
 🏏 TurfMaster - Turf Booking System (Flask)
 
-A modern, attractive, and professional Turf Booking System built using Python Flask with a beautiful UI, real-time booking, admin panel, and JSON-based storage.
+A modern and professional Turf Booking System built using Python Flask with a premium UI, real-time booking system, and secure admin dashboard.
 
-🚀 Perfect for college projects, mini projects, and real-world demo apps.
+🚀 Ideal for college projects, mini projects, and portfolio.
 
-✨ Features
-🎨 Attractive UI
-Gradient Background (Purple/Blue theme)
-Glass-morphism UI cards (blur + transparency)
-Smooth hover animations & transitions
-Fully responsive (Mobile + Desktop)
+📌 Features
+🎨 Modern UI
+Gradient Background (Purple/Blue)
+Glassmorphism effect (Blur transparent cards)
+Smooth animations & hover transitions
+Fully responsive design (Mobile + Desktop)
 🏟️ 24 Pre-loaded Pune Turfs
 
-Includes categories like:
+Includes multiple sports categories:
 
 🏏 Cricket Grounds (5)
 Deccan Gymkhana Cricket Ground – ₹2000/hr
@@ -47,41 +47,41 @@ And more...
 
 Each turf includes:
 
-Name, location 📍
+Name & Location 📍
 Rating ⭐
 Price per hour 💰
 Capacity 👥
 Amenities 🎯
 Description 📝
-Images (via Unsplash)
+Images (Unsplash)
 📅 Booking System
-Date selection (Calendar UI)
+Date selection using calendar
 12 time slots (6 AM to 10 PM)
-Real-time slot availability
+Real-time slot availability check
 Booked slots shown in red
-User details form (Name + Phone)
-Booking confirmation message with animation
-📌 My Bookings Page
+User form (Name + Phone)
+Booking confirmation message
+📌 My Bookings
 View all bookings in one place
-Shows turf name, slot, date, price
-Cancel booking feature available
-🔒 Admin Panel (Secure)
+Cancel booking option
+Slot automatically becomes available again
+🔒 Admin Panel
 
-Admin login required to access database.
+Admin panel is protected with login.
 
-Default Admin Credentials:
+Default Admin Credentials
 
-⚠️ Change these before deployment!
+⚠️ Change before deployment!
 
 Username: admin
 Password: admin123
-Admin Features:
-Complete booking database view
-Statistics dashboard (Revenue, bookings, etc.)
-Search and filter bookings
-Export bookings to CSV
+Admin Features
+Complete bookings database view
+Statistics dashboard (Revenue, total bookings, etc.)
+Search bookings by name/phone/turf
+Sort bookings by any column
 Delete bookings
-Sort bookings by column
+Export bookings to CSV
 💾 Data Storage
 All bookings are stored in bookings.json
 Data remains safe even after restarting the server
@@ -91,162 +91,127 @@ Python 3.7+
 Flask
 Step 1: Install Flask
 pip install flask
-Step 2: Run the Application
+Step 2: Run the Project
 cd turf_booking_python
 python app.py
 Step 3: Open in Browser
 http://localhost:5000
-🔐 Admin Access
-Admin Login Page:
+🔐 Admin Login
+Admin Login URL
 http://localhost:5000/admin/login
 
-After login, you will be redirected to database dashboard automatically.
+After login, you will be redirected to the database dashboard automatically.
 
 📁 Project Structure
 turf_booking_python/
 │
 ├── app.py                      # Main Flask application
-├── bookings.json               # Bookings data (auto-created)
+├── bookings.json               # Booking data (auto-created)
 │
 ├── templates/
-│   ├── index.html              # Home page (all turfs)
-│   ├── turf_details.html       # Booking page
-│   ├── my_bookings.html        # My bookings page
-│   ├── database.html           # Admin database view
+│   ├── index.html              # Home page
+│   ├── turf_details.html       # Turf booking page
+│   ├── my_bookings.html        # User bookings page
+│   ├── database.html           # Admin database dashboard
 │   └── admin_login.html        # Admin login page
 │
 └── static/
     └── css/
-        └── style.css           # All styling and animations
-📄 Pages Overview
+        └── style.css           # Styling + animations
+🌐 Pages Overview
 🏠 Home Page (/)
-Shows all turfs in grid view
-Turf details in cards
-"Book Now" button for each turf
+Displays all turfs in a grid
+Turf cards show price, rating, location
+"Book Now" button available
 🏟️ Turf Details Page (/turf/<id>)
 Full turf details
-Select date
-Select time slot
+Date picker
+Slot selection
 Booking form
-Real-time slot checking
+Real-time availability check
 📌 My Bookings Page (/my_bookings)
-View all bookings
-Cancel booking button available
+Displays all bookings
+Cancel booking button
 🔐 Admin Login Page (/admin/login)
-Secure admin login
-Beautiful login UI
-📊 Admin Database Page (/database)
+Secure login page
+Credentials required
+📊 Admin Dashboard (/database)
 
-🔒 Protected (Admin login required)
+🔒 Protected route (Login required)
 
-View complete bookings database
-Statistics dashboard
-Search + filter
-Export CSV
-Delete booking
-🔧 How to Use
-👤 For Users
-Open home page (/)
-Choose a turf and click Book Now
-Select date 📅
-Select time slot ⏰
-Enter name and phone number
-Click Confirm Booking
-Booking confirmed 🎉
-To cancel booking → go to My Bookings
-👨‍💻 For Admin
-
-Open:
-
-http://localhost:5000/admin/login
-Login using credentials
-Manage bookings from database dashboard
-🔐 Security Tips
-Change Admin Credentials (IMPORTANT)
-
-Inside app.py, update:
-
-ADMIN_USERNAME = 'your_username'
-ADMIN_PASSWORD = 'your_strong_password'
-Good Password Examples
-
-✅ Use strong passwords like:
-
-MyTurf@2024!Secure
-Pune$ports#Admin99
-Cr1ck3t&Ball@2024
-Bad Passwords (Avoid)
-
-❌
-
-admin123
-password
-12345678
-🎯 API Endpoints
+Booking database view
+Statistics cards
+Search + sort + filter
+Export CSV option
+Delete booking option
+🔧 API Endpoints
 Method	Endpoint	Description
 GET	/	Home page
 GET	/turf/<id>	Turf details page
 POST	/check_slot	Check slot availability
-POST	/book	Create booking
-GET	/my_bookings	View bookings
+POST	/book	Book a turf
+GET	/my_bookings	View all bookings
 POST	/cancel_booking/<id>	Cancel booking
-GET	/api/bookings	View bookings JSON
+GET	/api/bookings	Get bookings JSON
 GET/POST	/admin/login	Admin login
 GET	/admin/logout	Admin logout
-GET	/database	Admin database panel
-🎨 Customization
-🎨 Change UI Colors
+GET	/database	Admin database dashboard
+🔐 Security Notes
+Change Admin Credentials
 
-Edit file:
+Edit in app.py:
+
+ADMIN_USERNAME = "your_username"
+ADMIN_PASSWORD = "your_strong_password"
+
+⚠️ Never deploy with default credentials.
+
+🎨 Customization
+Change Theme Colors
+
+Edit:
 
 static/css/style.css
 
 Example:
 
 background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-🏟️ Add More Turfs
+Add New Turf
 
-Inside app.py, update:
+Edit list inside app.py:
 
 TURFS_DATA = [...]
-⏰ Modify Time Slots
+Change Time Slots
 
-Inside app.py, edit:
+Edit inside app.py:
 
 TIME_SLOTS = [...]
 🐛 Troubleshooting
-❓ Page Not Opening
+Flask not installed?
+pip install flask
+Port already in use?
 
-Flask installed?
+Change this line in app.py:
 
-pip show flask
-Port already in use? Change port in app.py
-❓ Bookings Not Saving
-Check folder write permission
-Create bookings.json manually if needed
-❓ Admin Login Not Working
-Verify correct username/password
-Clear browser cookies/session
-❓ Database Page Not Opening
-Must login first via /admin/login
-Session expired → login again
+app.run(debug=True, port=5000)
+Bookings not saving?
+Ensure folder has write permission
+Ensure bookings.json exists
 📌 Future Improvements (Optional)
-Add user login/signup
-Use SQLite/MySQL database instead of JSON
+User login/signup system
+Database integration (SQLite/MySQL)
 Payment gateway integration
 Email/SMS booking confirmation
 Admin role management
-🏁 Conclusion
-
-This project is a complete sports turf booking system with a premium UI and powerful admin dashboard.
-
-⭐ If you like this project, don't forget to star the repository!
-
-❤️ Made With
+❤️ Built With
 Python 🐍
 Flask ⚡
 HTML + CSS + JS 🎨
 JSON Storage 💾
-📷 Screenshots (Optional)
+⭐ Support
 
-You can add screenshots like:
+If you like this project, give it a ⭐ on GitHub.
+
+🎉 Enjoy TurfMaster!
+
+Made with ❤️ for sports lovers 🚀
