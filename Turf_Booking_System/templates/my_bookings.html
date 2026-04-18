@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Bookings - TurfMaster</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .tabs-wrapper {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 0;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            font-size: 0.95rem;
+            font-weight: 600;
+            padding: 0.7rem 1.4rem;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+            border-radius: 8px 8px 0 0;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .tab-btn:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .tab-btn.active {
+            color: #34d399;
+            border-bottom-color: #34d399;
+        }
+
+        .tab-badge {
+            background: rgba(52, 211, 153, 0.15);
+            color: #34d399;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            padding: 1px 8px;
+            font-weight: 700;
+        }
+
+        .tab-btn.cancelled-tab.active {
+            color: #f87171;
+            border-bottom-color: #f87171;
+        }
+
+        .tab-btn.cancelled-tab .tab-badge {
+            background: rgba(248, 113, 113, 0.15);
+            color: #f87171;
+        }
+
+        .tab-btn.completed-tab.active {
+            color: #60a5fa;
+            border-bottom-color: #60a5fa;
+        }
+
+        .tab-btn.completed-tab .tab-badge {
+            background: rgba(96, 165, 250, 0.15);
+            color: #60a5fa;
+        }
+
+        .tab-panel {
+            display: none;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+
+        /* Status badge on cards */
+        .status-badge {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-bottom: 0.4rem;
+        }
+
+        .status-active {
+            background: rgba(52, 211, 153, 0.15);
+            color: #34d399;
+        }
+
+        .status-completed {
+            background: rgba(96, 165, 250, 0.15);
+            color: #60a5fa;
+        }
+
+        .status-cancelled {
+            background: rgba(248, 113, 113, 0.15);
+            color: #f87171;
+        }
+
+        .cancel-booking-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-trophy"></i>
+                    <div>
+                        <h1>TurfMaster</h1>
+                        <p>Book Your Sports Arena</p>
+                    </div>
+                </div>
+                <div class="nav-links">
+                    <a href="/" class="nav-link">Home</a>
+                    <a href="/my_bookings" class="nav-link active">My Bookings</a>
+                    <span class="nav-link" style="color:#34d399; cursor:default;">
+                        <i class="fas fa-user-circle"></i> {{ username }}
+                    </span>
+                    <a href="/logout" class="nav-link logout-link">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="bookings-section">
+        <div class="container">
+            <h2 class="section-title">
+                <i class="fas fa-calendar-check"></i> My Bookings
+            </h2>
+
+            <!-- Tabs -->
+            <div class="tabs-wrapper">
+                <button class="tab-btn active" onclick="switchTab('active', this)">
+                    <i class="fas fa-bolt"></i> Active
+                    <span class="tab-badge">{{ active|length }}</span>
+                </button>
+                <button class="tab-btn completed-tab" onclick="switchTab('completed', this)">
+                    <i class="fas fa-check-circle"></i> Completed
+                    <span class="tab-badge">{{ completed|length }}</span>
+                </button>
+                <button class="tab-btn cancelled-tab" onclick="switchTab('cancelled', this)">
+                    <i class="fas fa-times-circle"></i> Cancelled
+                    <span class="tab-badge">{{ cancelled|length }}</span>
+                </button>
+            </div>
+
+            <!-- Active Tab -->
+            <div class="tab-panel active" id="tab-active">
+                {% if active %}
+                <div class="bookings-grid">
+                    {% for booking in active %}
+                    <div class="booking-card-item">
+                        <div class="booking-header">
+                            <h3>{{ booking.turf_name }}</h3>
+                            <i class="fas fa-bolt booking-icon" style="color:#34d399;"></i>
+                        </div>
+                        <div class="booking-details">
+                            <span class="status-badge status-active">🟢 Active</span>
+                            <div class="booking-row"><strong>Date:</strong> {{ booking.date }}</div>
+                            <div class="booking-row"><strong>Time:</strong> {{ booking.slot_time }}</div>
+                            <div class="booking-row"><strong>Phone:</strong> {{ booking.phone }}</div>
+                            <div class="booking-row"><strong>Booked At:</strong> {{ booking.booked_at }}</div>
+                            <div class="booking-price">₹{{ booking.price }}</div>
+                            <button class="cancel-booking-btn" onclick="cancelBooking({{ booking.id }})">
+                                <i class="fas fa-times-circle"></i> Cancel Booking
+                            </button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="no-bookings">
+                    <i class="fas fa-calendar-times"></i>
+                    <h3>No Active Bookings</h3>
+                    <p>You have no upcoming bookings. Book your favorite turf now!</p>
+                    <a href="/" class="book-now-btn">
+                        <i class="fas fa-plus-circle"></i> Book a Turf
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Completed Tab -->
+            <div class="tab-panel" id="tab-completed">
+                {% if completed %}
+                <div class="bookings-grid">
+                    {% for booking in completed %}
+                    <div class="booking-card-item" style="opacity:0.8;">
+                        <div class="booking-header">
+                            <h3>{{ booking.turf_name }}</h3>
+                            <i class="fas fa-check-circle booking-icon" style="color:#60a5fa;"></i>
+                        </div>
+                        <div class="booking-details">
+                            <span class="status-badge status-completed">✅ Completed</span>
+                            <div class="booking-row"><strong>Date:</strong> {{ booking.date }}</div>
+                            <div class="booking-row"><strong>Time:</strong> {{ booking.slot_time }}</div>
+                            <div class="booking-row"><strong>Phone:</strong> {{ booking.phone }}</div>
+                            <div class="booking-row"><strong>Booked At:</strong> {{ booking.booked_at }}</div>
+                            <div class="booking-price">₹{{ booking.price }}</div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="no-bookings">
+                    <i class="fas fa-history"></i>
+                    <h3>No Completed Bookings</h3>
+                    <p>Your past bookings will appear here once the slot time is over.</p>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Cancelled Tab -->
+            <div class="tab-panel" id="tab-cancelled">
+                {% if cancelled %}
+                <div class="bookings-grid">
+                    {% for booking in cancelled %}
+                    <div class="booking-card-item" style="opacity:0.7;">
+                        <div class="booking-header">
+                            <h3>{{ booking.turf_name }}</h3>
+                            <i class="fas fa-times-circle booking-icon" style="color:#f87171;"></i>
+                        </div>
+                        <div class="booking-details">
+                            <span class="status-badge status-cancelled">❌ Cancelled</span>
+                            <div class="booking-row"><strong>Date:</strong> {{ booking.date }}</div>
+                            <div class="booking-row"><strong>Time:</strong> {{ booking.slot_time }}</div>
+                            <div class="booking-row"><strong>Phone:</strong> {{ booking.phone }}</div>
+                            <div class="booking-row"><strong>Booked At:</strong> {{ booking.booked_at }}</div>
+                            <div class="booking-price">₹{{ booking.price }}</div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="no-bookings">
+                    <i class="fas fa-check-double"></i>
+                    <h3>No Cancelled Bookings</h3>
+                    <p>You haven't cancelled any bookings. Keep it up! 🎉</p>
+                </div>
+                {% endif %}
+            </div>
+
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <p>© 2026 TurfMaster - Your Sports Booking Partner</p>
+            <p class="footer-subtitle">Made with ❤️ for Sports Enthusiasts</p>
+        </div>
+    </footer>
+
+    <script>
+        function switchTab(tabName, btn) {
+            // Deactivate all panels and buttons
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            // Activate selected
+            document.getElementById('tab-' + tabName).classList.add('active');
+            btn.classList.add('active');
+        }
+
+        async function cancelBooking(bookingId) {
+            if (!confirm('Are You Sure that you want to cancel your Booking?')) return;
+            try {
+                const response = await fetch(`/cancel_booking/${bookingId}`, { method: 'POST' });
+                const data = await response.json();
+                if (data.success) {
+                    alert('Booking cancelled! ✓');
+                    location.reload();
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            } catch (err) {
+                alert('Error cancelling booking.');
+            }
+        }
+    </script>
+</body>
+
+</html>

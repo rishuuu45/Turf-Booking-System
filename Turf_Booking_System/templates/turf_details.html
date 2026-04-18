@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ turf.name }} - TurfMaster</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-trophy"></i>
+                    <div>
+                        <h1>TurfMaster</h1>
+                        <p>Book Your Sports Arena</p>
+                    </div>
+                </div>
+                <div class="nav-links">
+                    <a href="/" class="nav-link">Home</a>
+                    <a href="/my_bookings" class="nav-link">My Bookings</a>
+                    <span class="nav-link" style="color:#34d399; cursor:default;">
+                        <i class="fas fa-user-circle"></i> {{ username }}
+                    </span>
+                    <a href="/logout" class="nav-link logout-link">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div id="successMessage" class="success-message">
+        <i class="fas fa-check-circle"></i>
+        <span>Booking Successful! 🎉</span>
+    </div>
+
+    <section class="booking-section">
+        <div class="container">
+            <a href="/" class="back-btn">
+                <i class="fas fa-arrow-left"></i> Back to Turfs
+            </a>
+
+            <div class="turf-details-banner">
+                <div class="banner-grid">
+                    <div class="banner-image">
+                        <img src="{{ turf.image }}" alt="{{ turf.name }}">
+                    </div>
+                    <div class="banner-content">
+                        <div class="banner-header">
+                            <h2>{{ turf.name }}</h2>
+                            <div class="rating-badge">
+                                <i class="fas fa-star"></i>
+                                <span>{{ turf.rating }}</span>
+                            </div>
+                        </div>
+                        <p class="banner-description">{{ turf.description }}</p>
+                        <div class="banner-info">
+                            <div class="info-row"><i class="fas fa-map-marker-alt"></i><span>{{ turf.location }}</span>
+                            </div>
+                            <div class="info-row"><i class="fas fa-users"></i><span>Capacity: {{ turf.capacity }}
+                                    players</span></div>
+                            <div class="info-row"><i class="fas fa-phone"></i><span>+91 98765 43210</span></div>
+                        </div>
+                        <div class="banner-amenities">
+                            {% for amenity in turf.amenities %}
+                            <span class="amenity-badge">✓ {{ amenity }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Date Selection -->
+            <div class="booking-card">
+                <h3 class="card-title"><i class="fas fa-calendar-alt"></i> Select Date</h3>
+                <input type="date" id="bookingDate" min="{{ today }}" class="date-input">
+            </div>
+
+            <!-- Slot Selection -->
+            <div class="booking-card" id="slotsCard" style="display: none;">
+                <h3 class="card-title"><i class="fas fa-clock"></i> Available Slots</h3>
+                <div id="slotsGrid" class="slots-grid"></div>
+            </div>
+
+            <!-- Booking Summary -->
+            <div class="booking-card" id="summaryCard" style="display: none;">
+                <h3 class="card-title"><i class="fas fa-info-circle"></i> Booking Summary</h3>
+                <div class="summary-content">
+                    <div class="summary-info">
+                        <h4>{{ turf.name }}</h4>
+                        <p id="summaryDetails"></p>
+                        <div class="summary-price">₹{{ turf.price }}</div>
+                    </div>
+                    <button class="confirm-btn" onclick="openBookingModal()">Confirm Booking</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Booking Modal -->
+    <div id="bookingModal" class="modal">
+        <div class="modal-content">
+            <h2>Confirm Your Booking</h2>
+            <form id="bookingForm">
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="tel" id="userPhone" placeholder="Enter your phone number" required>
+                </div>
+                <div class="modal-summary">
+                    <h3>Booking Summary</h3>
+                    <div id="modalSummary"></div>
+                </div>
+                <div class="modal-buttons">
+                    <button type="button" class="cancel-btn" onclick="closeBookingModal()">Cancel</button>
+                    <button type="submit" class="submit-btn">Confirm Booking</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>© 2026 TurfMaster - Your Sports Booking Partner</p>
+            <p class="footer-subtitle">Made with ❤️ for Sports Enthusiasts</p>
+        </div>
+    </footer>
+
+    <script>
+        const turfId = {{ turf.id }};
+        const turfName = "{{ turf.name }}";
+        const turfPrice = {{ turf.price }};
+        const slots = {{ slots | tojson }};
+
+        let selectedDate = '';
+        let selectedSlot = null;
+
+        document.getElementById('bookingDate').addEventListener('change', function () {
+            selectedDate = this.value;
+            loadSlots();
+        });
+
+        async function loadSlots() {
+            const slotsCard = document.getElementById('slotsCard');
+            const slotsGrid = document.getElementById('slotsGrid');
+            slotsCard.style.display = 'block';
+            slotsGrid.innerHTML = '<p style="color:white;text-align:center;padding:1rem;">Loading slots...</p>';
+
+            try {
+                const response = await fetch('/api/bookings');
+                const allBookings = await response.json();
+                slotsGrid.innerHTML = '';
+
+                const now = new Date();
+
+                slots.forEach(slot => {
+                    // Check if booked by anyone
+                    const isBooked = allBookings.some(
+                        b => b.turf_id === turfId && b.date === selectedDate && b.slot_id === slot.id
+                    );
+
+                    // Check if slot time has passed (for today)
+                    let isPast = false;
+                    if (selectedDate === now.toISOString().split('T')[0]) {
+                        const slotEndStr = slot.time.split(' - ')[1];
+                        const [time, meridiem] = slotEndStr.split(' ');
+                        let [hours, minutes] = time.split(':').map(Number);
+                        if (meridiem === 'PM' && hours !== 12) hours += 12;
+                        if (meridiem === 'AM' && hours === 12) hours = 0;
+                        const slotEnd = new Date();
+                        slotEnd.setHours(hours, minutes, 0, 0);
+                        if (slotEnd <= now) isPast = true;
+                    }
+
+                    const disabled = isBooked || isPast;
+                    const slotBtn = document.createElement('button');
+                    slotBtn.className = `slot-btn ${disabled ? 'booked' : ''}`;
+                    slotBtn.disabled = disabled;
+                    slotBtn.innerHTML = `
+                        <div>${slot.time}</div>
+                        ${isBooked ? '<div class="slot-status"><i class="fas fa-times-circle"></i> Booked</div>' : ''}
+                        ${isPast ? '<div class="slot-status"><i class="fas fa-clock"></i> Expired</div>' : ''}
+                    `;
+
+                    if (!disabled) {
+                        slotBtn.addEventListener('click', (e) => selectSlot(slot, e.currentTarget));
+                    }
+                    slotsGrid.appendChild(slotBtn);
+                });
+            } catch (error) {
+                slotsGrid.innerHTML = '<p style="color:#ef4444;text-align:center;">Error loading slots.</p>';
+            }
+        }
+
+        function selectSlot(slot, btn) {
+            selectedSlot = slot;
+            document.querySelectorAll('.slot-btn').forEach(b => {
+                b.classList.remove('selected');
+                if (!b.disabled && !b.classList.contains('booked')) {
+                    b.innerHTML = `<div>${b.dataset.time || slot.time}</div>`;
+                }
+            });
+            // Re-render all slots cleanly then mark selected
+            loadSlots().then(() => {
+                // After reload, mark selected
+            });
+            btn.classList.add('selected');
+            btn.innerHTML = `<div>${slot.time}</div><div class="slot-status"><i class="fas fa-check-circle"></i> Selected</div>`;
+            showSummary();
+        }
+
+        function showSummary() {
+            const summaryCard = document.getElementById('summaryCard');
+            const summaryDetails = document.getElementById('summaryDetails');
+            summaryCard.style.display = 'block';
+            summaryDetails.textContent = `${selectedDate} • ${selectedSlot.time}`;
+            summaryCard.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function openBookingModal() {
+            if (!selectedSlot) { alert('First Select the Slot!'); return; }
+            document.getElementById('modalSummary').innerHTML = `
+                <p><strong>${turfName}</strong></p>
+                <p>${selectedDate} • ${selectedSlot.time}</p>
+                <p class="modal-price">₹${turfPrice}</p>
+            `;
+            document.getElementById('bookingModal').style.display = 'flex';
+        }
+
+        function closeBookingModal() {
+            document.getElementById('bookingModal').style.display = 'none';
+        }
+
+        document.getElementById('bookingForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const phone = document.getElementById('userPhone').value;
+
+            try {
+                const response = await fetch('/book', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        turf_id: turfId,
+                        date: selectedDate,
+                        slot_id: selectedSlot.id,
+                        phone: phone
+                    })
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    closeBookingModal();
+                    document.getElementById('userPhone').value = '';
+                    document.getElementById('successMessage').style.display = 'flex';
+                    setTimeout(() => {
+                        document.getElementById('successMessage').style.display = 'none';
+                    }, 3000);
+                    selectedSlot = null;
+                    setTimeout(() => {
+                        loadSlots();
+                        document.getElementById('summaryCard').style.display = 'none';
+                    }, 1500);
+                } else {
+                    alert(data.message);
+                }
+            } catch (err) {
+                alert('Booking failed. Try again.');
+            }
+        });
+
+        window.onclick = function (e) {
+            if (e.target === document.getElementById('bookingModal')) closeBookingModal();
+        };
+    </script>
+</body>
+
+</html>

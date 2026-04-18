@@ -1,0 +1,44 @@
+[
+    {
+        "id": 1,
+        "turf_id": 2,
+        "turf_name": "Shivaji Nagar Football Arena",
+        "date": "2026-04-18",
+        "slot_id": 12,
+        "slot_time": "09:00 PM - 10:00 PM",
+        "name": "RISHU45",
+        "phone": "7821855245",
+        "price": 1800,
+        "username": "RISHU45",
+        "booked_at": "2026-04-18 21:26:28",
+        "status": "cancelled"
+    },
+    {
+        "id": 2,
+        "turf_id": 3,
+        "turf_name": "Kothrud Badminton Academy",
+        "date": "2026-04-18",
+        "slot_id": 12,
+        "slot_time": "09:00 PM - 10:00 PM",
+        "name": "RISHU45",
+        "phone": "7821855245",
+        "price": 800,
+        "username": "RISHU45",
+        "status": "completed",
+        "booked_at": "2026-04-18 21:33:08"
+    },
+    {
+        "id": 3,
+        "turf_id": 1,
+        "turf_name": "Deccan Gymkhana Cricket Ground",
+        "date": "2026-04-19",
+        "slot_id": 2,
+        "slot_time": "07:00 AM - 08:00 AM",
+        "name": "RISHU45",
+        "phone": "7821882558",
+        "price": 2000,
+        "username": "RISHU45",
+        "status": "active",
+        "booked_at": "2026-04-18 22:50:06"
+    }
+]

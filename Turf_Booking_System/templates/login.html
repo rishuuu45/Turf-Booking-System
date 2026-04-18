@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login / Register - TurfMaster</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ── Page layout ── */
+        .auth-page {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+        }
+
+        .auth-center {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
+
+        .auth-box {
+            background: rgba(255, 255, 255, 0.07);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 24px;
+            width: 100%;
+            max-width: 480px;
+            overflow: hidden;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+        }
+
+        /* ── Logo strip ── */
+        .auth-logo {
+            background: linear-gradient(135deg, #34d399, #3b82f6);
+            padding: 1.5rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .auth-logo i {
+            font-size: 2rem;
+            color: #fff;
+        }
+
+        .auth-logo h1 {
+            color: #fff;
+            font-size: 1.6rem;
+            margin: 0;
+        }
+
+        .auth-logo p {
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 0.8rem;
+            margin: 0;
+        }
+
+        /* ── Top tabs: User / Admin ── */
+        .role-tabs {
+            display: flex;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .role-tab {
+            flex: 1;
+            padding: 1rem;
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .role-tab:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .role-tab.active {
+            color: #34d399;
+            border-bottom: 3px solid #34d399;
+            background: rgba(52, 211, 153, 0.07);
+        }
+
+        .role-tab.admin-tab.active {
+            color: #f59e0b;
+            border-bottom-color: #f59e0b;
+            background: rgba(245, 158, 11, 0.07);
+        }
+
+        /* ── Panel body ── */
+        .auth-body {
+            padding: 1.8rem 2rem 2rem;
+        }
+
+        /* ── Sub-tabs inside User panel: Login / Register ── */
+        .sub-tabs {
+            display: flex;
+            background: rgba(0, 0, 0, 0.25);
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 1.5rem;
+        }
+
+        .sub-tab {
+            flex: 1;
+            padding: 0.55rem;
+            border: none;
+            border-radius: 9px;
+            background: transparent;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.88rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s;
+        }
+
+        .sub-tab.active {
+            background: #34d399;
+            color: #0f0c29;
+        }
+
+        /* ── Form ── */
+        .auth-form .form-group {
+            margin-bottom: 1.1rem;
+        }
+
+        .auth-form label {
+            display: block;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.82rem;
+            margin-bottom: 0.4rem;
+            font-weight: 600;
+        }
+
+        .auth-form input {
+            width: 100%;
+            padding: 0.7rem 1rem;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border 0.2s;
+            box-sizing: border-box;
+        }
+
+        .auth-form input:focus {
+            border-color: #34d399;
+        }
+
+        .auth-form input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .auth-btn {
+            width: 100%;
+            padding: 0.85rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 0.5rem;
+        }
+
+        .user-btn {
+            background: linear-gradient(135deg, #34d399, #3b82f6);
+            color: #fff;
+        }
+
+        .admin-btn {
+            background: linear-gradient(135deg, #f59e0b, #ef4444);
+            color: #fff;
+        }
+
+        .auth-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        /* ── Error ── */
+        .error-box {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            color: #fca5a5;
+            font-size: 0.88rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* ── Admin badge ── */
+        .admin-badge {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 10px;
+            padding: 0.6rem 1rem;
+            color: #fbbf24;
+            font-size: 0.82rem;
+            margin-bottom: 1.2rem;
+            text-align: center;
+        }
+
+        .admin-form input:focus {
+            border-color: #f59e0b;
+        }
+
+        /* ── Footer ── */
+        .auth-footer {
+            background: rgba(0, 0, 0, 0.3);
+            text-align: center;
+            padding: 1rem;
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 0.8rem;
+        }
+
+        /* hidden panels */
+        .panel {
+            display: none;
+        }
+
+        .panel.active {
+            display: block;
+        }
+    </style>
+</head>
+
+<body class="auth-page">
+
+    <div class="auth-center">
+        <div class="auth-box">
+            <!-- Logo -->
+            <div class="auth-logo">
+                <i class="fas fa-trophy"></i>
+                <div>
+                    <h1>TurfMaster</h1>
+                    <p>Book Your Sports Arena</p>
+                </div>
+            </div>
+
+            <!-- Role Tabs -->
+            <div class="role-tabs">
+                <button class="role-tab {% if active_tab != 'admin' %}active{% endif %}" onclick="switchRole('user')"
+                    id="userRoleTab">
+                    <i class="fas fa-user"></i> User
+                </button>
+                <button class="role-tab admin-tab {% if active_tab == 'admin' %}active{% endif %}"
+                    onclick="switchRole('admin')" id="adminRoleTab">
+                    <i class="fas fa-user-shield"></i> Admin
+                </button>
+            </div>
+
+            <!-- Error (shared) -->
+            {% if error %}
+            <div style="padding: 0 2rem; padding-top: 1rem;">
+                <div class="error-box">
+                    <i class="fas fa-exclamation-circle"></i> {{ error }}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- ═══ USER PANEL ═══ -->
+            <div class="panel {% if active_tab != 'admin' %}active{% endif %}" id="userPanel">
+                <div class="auth-body">
+                    <!-- Login / Register sub-tabs -->
+                    <div class="sub-tabs">
+                        <button class="sub-tab active" id="loginSubTab" onclick="switchSub('login')">
+                            <i class="fas fa-sign-in-alt"></i> Login
+                        </button>
+                        <button class="sub-tab" id="registerSubTab" onclick="switchSub('register')">
+                            <i class="fas fa-user-plus"></i> Register
+                        </button>
+                    </div>
+
+                    <!-- User Login form -->
+                    <div id="loginForm">
+                        <form method="POST" class="auth-form">
+                            <input type="hidden" name="form_type" value="user_login">
+                            <div class="form-group">
+                                <label><i class="fas fa-user"></i> Username</label>
+                                <input type="text" name="username" placeholder="Enter your username" required>
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-lock"></i> Password</label>
+                                <input type="password" name="password" placeholder=" Enter Your Password " required>
+                            </div>
+                            <button type="submit" class="auth-btn user-btn">
+                                <i class="fas fa-sign-in-alt"></i> Login
+                            </button>
+                        </form>
+                        <p style="text-align:center; color:rgba(255,255,255,0.5); font-size:0.85rem; margin-top:1rem;">
+                            Do not have a Account ? <a href="#" onclick="switchSub('register')"
+                                style="color:#34d399;">Register here</a>
+                        </p>
+                    </div>
+
+                    <!-- Register form -->
+                    <div id="registerForm" style="display:none;">
+                        <form method="POST" class="auth-form">
+                            <input type="hidden" name="form_type" value="register">
+                            <div class="form-group">
+                                <label><i class="fas fa-user"></i> Username</label>
+                                <input type="text" name="username" placeholder=" Choose Unique username " required>
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-envelope"></i> Email</label>
+                                <input type="email" name="email" placeholder=" Enter Your Email address " required>
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-lock"></i> Password</label>
+                                <input type="password" name="password" placeholder="Strong password (min 6 chars)"
+                                    required>
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-lock"></i> Confirm Password</label>
+                                <input type="password" name="confirm_password" placeholder="Re-enter Your Password "
+                                    required>
+                            </div>
+                            <button type="submit" class="auth-btn user-btn">
+                                <i class="fas fa-user-plus"></i> Register &amp; Login
+                            </button>
+                        </form>
+                        <p style="text-align:center; color:rgba(255,255,255,0.5); font-size:0.85rem; margin-top:1rem;">
+                            Already have a Account? <a href="#" onclick="switchSub('login')"
+                                style="color:#34d399;">Login here</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ═══ ADMIN PANEL ═══ -->
+            <div class="panel {% if active_tab == 'admin' %}active{% endif %}" id="adminPanel">
+                <div class="auth-body">
+                    <div class="admin-badge">
+                        <i class="fas fa-shield-alt"></i>
+                        Admin access — Can Manage Database and all bookings
+                    </div>
+                    <form method="POST" class="auth-form admin-form">
+                        <input type="hidden" name="form_type" value="admin_login">
+                        <div class="form-group">
+                            <label><i class="fas fa-user-shield"></i> Admin Username</label>
+                            <input type="text" name="username" placeholder=" Enter Admin username " required>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-lock"></i> Admin Password</label>
+                            <input type="password" name="password" placeholder=" Enter Admin password " required>
+                        </div>
+                        <button type="submit" class="auth-btn admin-btn">
+                            <i class="fas fa-sign-in-alt"></i> Admin Login
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="auth-footer">© 2026 TurfMaster — Made with ❤️ for Sports Enthusiasts</div>
+        </div>
+    </div>
+
+    <script>
+        // On load — if server said active_tab=='admin', make sure JS reflects it
+        const serverTab = "{{ active_tab }}";
+        if (serverTab === 'admin') {
+            document.getElementById('userPanel').classList.remove('active');
+            document.getElementById('adminPanel').classList.add('active');
+            document.getElementById('adminRoleTab').classList.add('active');
+            document.getElementById('userRoleTab').classList.remove('active');
+        }
+
+        function switchRole(role) {
+            const userPanel = document.getElementById('userPanel');
+            const adminPanel = document.getElementById('adminPanel');
+            const uTab = document.getElementById('userRoleTab');
+            const aTab = document.getElementById('adminRoleTab');
+
+            if (role === 'user') {
+                userPanel.classList.add('active');
+                adminPanel.classList.remove('active');
+                uTab.classList.add('active');
+                aTab.classList.remove('active');
+            } else {
+                adminPanel.classList.add('active');
+                userPanel.classList.remove('active');
+                aTab.classList.add('active');
+                uTab.classList.remove('active');
+            }
+        }
+
+        function switchSub(sub) {
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+            const loginTab = document.getElementById('loginSubTab');
+            const regTab = document.getElementById('registerSubTab');
+
+            if (sub === 'login') {
+                loginForm.style.display = 'block';
+                registerForm.style.display = 'none';
+                loginTab.classList.add('active');
+                regTab.classList.remove('active');
+            } else {
+                registerForm.style.display = 'block';
+                loginForm.style.display = 'none';
+                regTab.classList.add('active');
+                loginTab.classList.remove('active');
+            }
+        }
+
+        // If there's an error and it came from register form, switch to register sub-tab
+        {% if error and request.form.get('form_type') == 'register' %}
+        switchSub('register');
+        {% endif %}
+    </script>
+</body>
+
+</html>

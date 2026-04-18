@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TurfMaster - Book Your Sports Arena</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-trophy"></i>
+                    <div>
+                        <h1>TurfMaster</h1>
+                        <p>Book Your Sports Arena</p>
+                    </div>
+                </div>
+                <div class="nav-links">
+                    <a href="/" class="nav-link active">Home</a>
+                    <a href="/my_bookings" class="nav-link">My Bookings</a>
+                    <span class="nav-link" style="color:#34d399; cursor:default;">
+                        <i class="fas fa-user-circle"></i> {{ username }}
+                    </span>
+                    <a href="/logout" class="nav-link logout-link">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h2 class="hero-title">Find Your Perfect Turf</h2>
+                <p class="hero-subtitle">Book premium sports facilities in just a few clicks!</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="turfs-section">
+        <div class="container">
+            <div class="turfs-grid">
+                {% for turf in turfs %}
+                <div class="turf-card">
+                    <div class="turf-image">
+                        <img src="{{ turf.image }}" alt="{{ turf.name }}">
+                        <div class="turf-rating">
+                            <i class="fas fa-star"></i>
+                            <span>{{ turf.rating }}</span>
+                        </div>
+                        <div class="turf-type">{{ turf.type }}</div>
+                    </div>
+                    <div class="turf-content">
+                        <h3 class="turf-name">{{ turf.name }}</h3>
+                        <p class="turf-description">{{ turf.description }}</p>
+                        <div class="turf-info">
+                            <div class="info-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>{{ turf.location }}</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-users"></i>
+                                <span>Capacity: {{ turf.capacity }} players</span>
+                            </div>
+                        </div>
+                        <div class="amenities">
+                            {% for amenity in turf.amenities %}
+                            <span class="amenity-tag">{{ amenity }}</span>
+                            {% endfor %}
+                        </div>
+                        <div class="turf-footer">
+                            <div class="price-info">
+                                <span class="price-label">Starting from</span>
+                                <div class="price">₹{{ turf.price }}</div>
+                                <span class="price-unit">per hour</span>
+                            </div>
+                            <a href="/turf/{{ turf.id }}" class="book-btn">Book Now</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <p>© 2026 TurfMaster - Your Sports Booking Partner</p>
+            <p class="footer-subtitle">Made with ❤️ for Sports Enthusiasts</p>
+        </div>
+    </footer>
+</body>
+
+</html>

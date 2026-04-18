@@ -1,0 +1,30 @@
+[
+    {
+        "id": 1,
+        "username": "admin",
+        "email": "rishuuuu26@gmail.com",
+        "password": "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9",
+        "created_at": "2026-04-03 20:47:26"
+    },
+    {
+        "id": 2,
+        "username": "RISHU45",
+        "email": "komalpathak2772004@gmail.com",
+        "password": "5d0cf1207a4e052e47a830c995f0b060a93b00c1a5fab803c4c3233162f026b8",
+        "created_at": "2026-04-03 20:52:04"
+    },
+    {
+        "id": 3,
+        "username": "komal45",
+        "email": "woodsee53@gmail.com",
+        "password": "4bc9863dedf26eae1a0e91ce850c1893dacf1234f496b752e54f94aff9526b41",
+        "created_at": "2026-04-05 09:02:17"
+    },
+    {
+        "id": 4,
+        "username": "yash",
+        "email": "yashpatole@gmail.com",
+        "password": "a4ce9443535e85e07a9c3dcbbe3c1c85b9d319ec7aeac80c2a0054a45628825b",
+        "created_at": "2026-04-18 21:07:12"
+    }
+]
